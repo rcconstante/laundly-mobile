@@ -42,15 +42,12 @@ export function LoginForm({ onContinue, scrollTo }: AuthFormProps) {
 
   return (
     <View style={styles.form} onLayout={(event) => { formOffsetYRef.current = event.nativeEvent.layout.y; }}>
-      <View style={styles.header}>
-        <Text accessibilityRole="header" style={styles.title}>{'Sign in to your\nAccount'}</Text>
-        <Text style={styles.subtitle}>Enter your email and password to log in</Text>
-      </View>
       <ShakeableField
         shakeKey={loginForm.getShakeKey('email')}
         onLayout={loginForm.registerLayout('email')}
         style={styles.fieldGroup}
       >
+        <Text style={styles.label}>Email</Text>
         <View
           style={[
             styles.inputBox,
@@ -83,6 +80,7 @@ export function LoginForm({ onContinue, scrollTo }: AuthFormProps) {
         onLayout={loginForm.registerLayout('password')}
         style={styles.fieldGroup}
       >
+        <Text style={styles.label}>Password</Text>
         <View
           style={[
             styles.inputBox,

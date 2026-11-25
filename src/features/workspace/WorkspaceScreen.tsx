@@ -12,7 +12,8 @@ export function WorkspaceScreen({ role, tab }: { role: Role; tab: Tab }) {
     <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
       <View style={styles.header}>
         <View style={styles.brand}>
-          <BrandLogo />
+          <BrandLogo markSize={36} />
+          <Text style={styles.brandName}>Laundly</Text>
           <Text style={styles.roleName}>{roles[role].label} workspace</Text>
         </View>
         <Pressable accessibilityRole="button" accessibilityLabel="Exit demo" style={styles.exit}
@@ -30,7 +31,8 @@ const styles = StyleSheet.create({
   header: { width: '100%', maxWidth: 580, alignSelf: 'center', padding: 18,
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10 },
   brand: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10, flexWrap: 'wrap' },
-  roleName: { color: colors.muted, fontSize: 12, lineHeight: 16, fontWeight: '600' },
+  brandName: { color: colors.ink, fontSize: 17, fontFamily: 'Inter_700Bold' },
+  roleName: { color: colors.muted, fontSize: 12, lineHeight: 16, fontFamily: 'Inter_600SemiBold' },
   exit: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.white, borderWidth: 1,
     borderColor: colors.line, alignItems: 'center', justifyContent: 'center' },
   page: { flex: 1 },

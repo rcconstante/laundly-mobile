@@ -36,11 +36,7 @@ export function WelcomeScreen() {
             </View>
             <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: '/login', params: { role } })}
               style={({ pressed }) => [styles.button, pressed && styles.pressed]}>
-              <Text style={styles.buttonLabel}>Log in</Text>
-            </Pressable>
-            <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: '/signup', params: { role } })}
-              style={({ pressed }) => [styles.button, styles.outlineButton, pressed && styles.pressed]}>
-              <Text style={[styles.buttonLabel, styles.whiteText]}>Sign up</Text>
+              <Text style={styles.buttonLabel}>Get started</Text>
             </Pressable>
             <Pressable accessibilityRole="button" onPress={() => router.push(workspaceHref(role))} style={styles.preview}>
               <Text style={styles.roleText}>Explore the demo</Text>
@@ -69,9 +65,7 @@ const styles = StyleSheet.create({
   selectedText: { color: colors.deepBlue },
   button: { width: '100%', minHeight: 58, borderRadius: 30, alignItems: 'center', justifyContent: 'center',
     paddingHorizontal: 20, paddingVertical: 12, backgroundColor: colors.white },
-  outlineButton: { backgroundColor: colors.deepBlue },
   buttonLabel: { color: colors.ink, fontSize: 17, fontFamily: 'Inter_700Bold', textAlign: 'center' },
-  whiteText: { color: colors.white },
   preview: { justifyContent: 'center', minHeight: 44 },
   pressed: { opacity: 0.8 },
 });

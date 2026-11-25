@@ -39,5 +39,5 @@ const styles = StyleSheet.create({
     borderRadius: 30, paddingHorizontal: 3 },
   active: { backgroundColor: colors.paleBlue },
   pressed: { opacity: 0.7 },
-  label: { fontSize: 10, lineHeight: 13, fontWeight: '800', textAlign: 'center' },
+  label: { fontSize: 10, lineHeight: 13, fontFamily: 'Inter_700Bold', textAlign: 'center' },
 });

@@ -3,7 +3,6 @@ import { Pressable, Text, TextInput, View } from 'react-native';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import ViewIcon from '@hugeicons/core-free-icons/ViewIcon';
 import ViewOffIcon from '@hugeicons/core-free-icons/ViewOffIcon';
-import { TermsLink } from '../../shared/legal/TermsLink';
 import { colors } from '../../theme';
 import { FieldError, ShakeableField } from './FieldError';
 import { styles, type AuthFormProps } from './formStyles';
@@ -52,20 +51,16 @@ export function SignUpForm({ onContinue, scrollTo }: AuthFormProps) {
   }
 
   return (
-    <View style={[styles.form, styles.signUpForm]} onLayout={(event) => { formOffsetYRef.current = event.nativeEvent.layout.y; }}>
-      <View style={[styles.header, styles.signUpHeader]}>
-        <Text accessibilityRole="header" style={[styles.title, styles.signUpTitle]}>{'Create your\nAccount'}</Text>
-        <Text style={[styles.subtitle, styles.signUpSubtitle]}>Enter your details below to get started with Laundly</Text>
-      </View>
+    <View style={styles.form} onLayout={(event) => { formOffsetYRef.current = event.nativeEvent.layout.y; }}>
       <ShakeableField
         shakeKey={signUpForm.getShakeKey('fullName')}
         onLayout={signUpForm.registerLayout('fullName')}
         style={styles.fieldGroup}
       >
+        <Text style={styles.label}>Full name</Text>
         <View
           style={[
             styles.inputBox,
-            styles.signUpInputBox,
             signUpForm.errors.fullName ? styles.inputBoxError : null,
           ]}
         >
@@ -82,7 +77,7 @@ export function SignUpForm({ onContinue, scrollTo }: AuthFormProps) {
             autoCapitalize="words"
             returnKeyType="next"
             onSubmitEditing={() => signUpForm.focusInput('email')}
-            style={[styles.input, styles.signUpInput]}
+            style={styles.input}
           />
         </View>
         <FieldError message={signUpForm.errors.fullName} />
@@ -93,10 +88,10 @@ export function SignUpForm({ onContinue, scrollTo }: AuthFormProps) {
         onLayout={signUpForm.registerLayout('email')}
         style={styles.fieldGroup}
       >
+        <Text style={styles.label}>Email</Text>
         <View
           style={[
             styles.inputBox,
-            styles.signUpInputBox,
             signUpForm.errors.email ? styles.inputBoxError : null,
           ]}
         >
@@ -115,7 +110,7 @@ export function SignUpForm({ onContinue, scrollTo }: AuthFormProps) {
             autoCorrect={false}
             returnKeyType="next"
             onSubmitEditing={() => signUpForm.focusInput('password')}
-            style={[styles.input, styles.signUpInput]}
+            style={styles.input}
           />
         </View>
         <FieldError message={signUpForm.errors.email} />
@@ -126,10 +121,10 @@ export function SignUpForm({ onContinue, scrollTo }: AuthFormProps) {
         onLayout={signUpForm.registerLayout('password')}
         style={styles.fieldGroup}
       >
+        <Text style={styles.label}>Password</Text>
         <View
           style={[
             styles.inputBox,
-            styles.signUpInputBox,
             signUpForm.errors.password ? styles.inputBoxError : null,
           ]}
         >
@@ -147,7 +142,7 @@ export function SignUpForm({ onContinue, scrollTo }: AuthFormProps) {
             autoCapitalize="none"
             returnKeyType="next"
             onSubmitEditing={() => signUpForm.focusInput('confirmPassword')}
-            style={[styles.input, styles.signUpInput]}
+            style={styles.input}
           />
           <Pressable
             accessibilityRole="button"
@@ -171,10 +166,10 @@ export function SignUpForm({ onContinue, scrollTo }: AuthFormProps) {
         onLayout={signUpForm.registerLayout('confirmPassword')}
         style={styles.fieldGroup}
       >
+        <Text style={styles.label}>Confirm password</Text>
         <View
           style={[
             styles.inputBox,
-            styles.signUpInputBox,
             signUpForm.errors.confirmPassword ? styles.inputBoxError : null,
           ]}
         >
@@ -192,7 +187,7 @@ export function SignUpForm({ onContinue, scrollTo }: AuthFormProps) {
             autoCapitalize="none"
             returnKeyType="done"
             onSubmitEditing={handleSignUp}
-            style={[styles.input, styles.signUpInput]}
+            style={styles.input}
           />
           <Pressable
             accessibilityRole="button"
@@ -212,7 +207,6 @@ export function SignUpForm({ onContinue, scrollTo }: AuthFormProps) {
         </View>
         <FieldError message={signUpForm.errors.confirmPassword} />
       </ShakeableField>
-      <TermsLink showAgreement />
       <Pressable accessibilityRole="button" onPress={handleSignUp}
         style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}>
         <Text style={styles.primaryLabel}>Sign up</Text>

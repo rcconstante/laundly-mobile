@@ -161,12 +161,12 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: '700',
+    fontFamily: 'Inter_700Bold',
   },
   url: {
     marginTop: 2,
     fontSize: 12,
-    fontWeight: '400',
+    fontFamily: 'Inter_400Regular',
   },
   closeButton: {
     width: 36,
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
-    fontWeight: '500',
+    fontFamily: 'Inter_400Regular',
   },
   errorState: {
     flex: 1,
@@ -207,11 +207,11 @@ const styles = StyleSheet.create({
   },
   errorTitle: {
     fontSize: 18,
-    fontWeight: '700',
+    fontFamily: 'Inter_700Bold',
   },
   errorBody: {
     fontSize: 14,
-    fontWeight: '400',
+    fontFamily: 'Inter_400Regular',
     textAlign: 'center',
     lineHeight: 20,
   },
@@ -224,6 +224,6 @@ const styles = StyleSheet.create({
   retryLabel: {
     color: '#FFFFFF',
     fontSize: 15,
-    fontWeight: '600',
+    fontFamily: 'Inter_600SemiBold',
   },
 });

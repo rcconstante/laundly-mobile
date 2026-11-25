@@ -65,6 +65,6 @@ const styles = StyleSheet.create({
     fontSize: 12.5,
     lineHeight: 17,
     marginTop: 2,
-    fontWeight: '600',
+    fontFamily: 'Inter_600SemiBold',
   },
 });

@@ -1,6 +1,6 @@
 # Laundly Mobile
 
-![Laundly logo](assets/brand/laundly-logo.webp)
+![Laundly logo](assets/brand/laundly-icon.webp)
 
 Expo and React Native preview for laundry shop owners, clients, and riders.
 
@@ -13,7 +13,7 @@ npm start
 
 Run `npm run android` or `npm run ios` to open a native target. Run `npm run web` for a browser preview.
 
-Select a role on the welcome screen and choose **Explore the demo** to open its workspace. Select **Log in** or **Sign up** to open the corresponding Manke-style screen and try it with sample details. The Manke login and signup forms use local validation in this preview. The role pages are blank with a shared Laundly header and floating navigation. The **Terms and Conditions** link temporarily points to [the Laundly website](https://laundly.vercel.app/).
+Select a role on the welcome screen and choose **Explore the demo** to open its workspace. Choose **Get started** to switch between login and signup. Use sample details for both forms. The Manke login and signup forms use local validation in this preview. The role pages are blank with a shared Laundly header and floating navigation. The app links to [Privacy Policy](https://laundly.vercel.app/privacy) and [Terms and Conditions](https://laundly.vercel.app/terms) on the Laundly website.
 
 | Role | Tabs |
 | --- | --- |
