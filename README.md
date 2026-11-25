@@ -13,7 +13,7 @@ npm start
 
 Run `npm run android` or `npm run ios` to open a native target. Run `npm run web` for a browser preview.
 
-Select a role on the welcome screen and choose **Explore the demo** to open its workspace. You can also try the login and signup forms with sample details. The Manke login and signup forms use local validation in this preview. The role pages are blank with a shared Laundly header and floating navigation. The **Terms and Conditions** link temporarily points to [the Laundly website](https://laundly.vercel.app/).
+Select a role on the welcome screen and choose **Explore the demo** to open its workspace. Select **Log in** or **Sign up** to open the corresponding Manke-style screen and try it with sample details. The Manke login and signup forms use local validation in this preview. The role pages are blank with a shared Laundly header and floating navigation. The **Terms and Conditions** link temporarily points to [the Laundly website](https://laundly.vercel.app/).
 
 | Role | Tabs |
 | --- | --- |

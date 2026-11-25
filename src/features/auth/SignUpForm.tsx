@@ -3,6 +3,7 @@ import { Pressable, Text, TextInput, View } from 'react-native';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import ViewIcon from '@hugeicons/core-free-icons/ViewIcon';
 import ViewOffIcon from '@hugeicons/core-free-icons/ViewOffIcon';
+import { TermsLink } from '../../shared/legal/TermsLink';
 import { colors } from '../../theme';
 import { FieldError, ShakeableField } from './FieldError';
 import { styles, type AuthFormProps } from './formStyles';
@@ -11,7 +12,7 @@ import { isStrongPassword, isValidEmail } from './validation';
 
 type SignUpField = 'fullName' | 'email' | 'password' | 'confirmPassword';
 
-export function SignUpForm({ onContinue, scrollTo, rolePicker }: AuthFormProps) {
+export function SignUpForm({ onContinue, scrollTo }: AuthFormProps) {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -51,10 +52,10 @@ export function SignUpForm({ onContinue, scrollTo, rolePicker }: AuthFormProps) 
   }
 
   return (
-    <View style={styles.form} onLayout={(event) => { formOffsetYRef.current = event.nativeEvent.layout.y; }}>
-      <View style={styles.header}>
-        <Text accessibilityRole="header" style={styles.title}>Create your account</Text>
-        <Text style={styles.subtitle}>Enter your details below to get started with Laundly</Text>
+    <View style={[styles.form, styles.signUpForm]} onLayout={(event) => { formOffsetYRef.current = event.nativeEvent.layout.y; }}>
+      <View style={[styles.header, styles.signUpHeader]}>
+        <Text accessibilityRole="header" style={[styles.title, styles.signUpTitle]}>{'Create your\nAccount'}</Text>
+        <Text style={[styles.subtitle, styles.signUpSubtitle]}>Enter your details below to get started with Laundly</Text>
       </View>
       <ShakeableField
         shakeKey={signUpForm.getShakeKey('fullName')}
@@ -64,6 +65,7 @@ export function SignUpForm({ onContinue, scrollTo, rolePicker }: AuthFormProps) 
         <View
           style={[
             styles.inputBox,
+            styles.signUpInputBox,
             signUpForm.errors.fullName ? styles.inputBoxError : null,
           ]}
         >
@@ -80,7 +82,7 @@ export function SignUpForm({ onContinue, scrollTo, rolePicker }: AuthFormProps) 
             autoCapitalize="words"
             returnKeyType="next"
             onSubmitEditing={() => signUpForm.focusInput('email')}
-            style={styles.input}
+            style={[styles.input, styles.signUpInput]}
           />
         </View>
         <FieldError message={signUpForm.errors.fullName} />
@@ -94,6 +96,7 @@ export function SignUpForm({ onContinue, scrollTo, rolePicker }: AuthFormProps) 
         <View
           style={[
             styles.inputBox,
+            styles.signUpInputBox,
             signUpForm.errors.email ? styles.inputBoxError : null,
           ]}
         >
@@ -112,7 +115,7 @@ export function SignUpForm({ onContinue, scrollTo, rolePicker }: AuthFormProps) 
             autoCorrect={false}
             returnKeyType="next"
             onSubmitEditing={() => signUpForm.focusInput('password')}
-            style={styles.input}
+            style={[styles.input, styles.signUpInput]}
           />
         </View>
         <FieldError message={signUpForm.errors.email} />
@@ -126,6 +129,7 @@ export function SignUpForm({ onContinue, scrollTo, rolePicker }: AuthFormProps) 
         <View
           style={[
             styles.inputBox,
+            styles.signUpInputBox,
             signUpForm.errors.password ? styles.inputBoxError : null,
           ]}
         >
@@ -143,7 +147,7 @@ export function SignUpForm({ onContinue, scrollTo, rolePicker }: AuthFormProps) 
             autoCapitalize="none"
             returnKeyType="next"
             onSubmitEditing={() => signUpForm.focusInput('confirmPassword')}
-            style={styles.input}
+            style={[styles.input, styles.signUpInput]}
           />
           <Pressable
             accessibilityRole="button"
@@ -170,6 +174,7 @@ export function SignUpForm({ onContinue, scrollTo, rolePicker }: AuthFormProps) 
         <View
           style={[
             styles.inputBox,
+            styles.signUpInputBox,
             signUpForm.errors.confirmPassword ? styles.inputBoxError : null,
           ]}
         >
@@ -187,7 +192,7 @@ export function SignUpForm({ onContinue, scrollTo, rolePicker }: AuthFormProps) 
             autoCapitalize="none"
             returnKeyType="done"
             onSubmitEditing={handleSignUp}
-            style={styles.input}
+            style={[styles.input, styles.signUpInput]}
           />
           <Pressable
             accessibilityRole="button"
@@ -207,10 +212,10 @@ export function SignUpForm({ onContinue, scrollTo, rolePicker }: AuthFormProps) 
         </View>
         <FieldError message={signUpForm.errors.confirmPassword} />
       </ShakeableField>
-      {rolePicker}
+      <TermsLink showAgreement />
       <Pressable accessibilityRole="button" onPress={handleSignUp}
         style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}>
-        <Text style={styles.primaryLabel}>Create account</Text>
+        <Text style={styles.primaryLabel}>Sign up</Text>
       </Pressable>
     </View>
   );

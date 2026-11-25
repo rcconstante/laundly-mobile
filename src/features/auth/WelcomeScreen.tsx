@@ -1,103 +1,77 @@
-import { LinearGradient } from 'expo-linear-gradient';
+import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { type ComponentRef, useRef, useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BrandLogo } from '../../shared/brand/BrandLogo';
-import { TermsLink } from '../../shared/legal/TermsLink';
-import { cardShadow, colors } from '../../theme';
+import { colors } from '../../theme';
 import { roleOptions, roles, workspaceHref, type Role } from '../workspace/roles';
-import { LoginForm } from './LoginForm';
-import { SignUpForm } from './SignUpForm';
+
+const background = require('../../../assets/brand/onboarding-background.webp');
 
 export function WelcomeScreen() {
-  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const insets = useSafeAreaInsets();
   const [role, setRole] = useState<Role>('client');
-  const scroll = useRef<ComponentRef<typeof ScrollView>>(null);
-  const cardOffset = useRef(0);
-  const signingUp = mode === 'signup';
-  const Form = signingUp ? SignUpForm : LoginForm;
-
-  function enterWorkspace() {
-    router.push(workspaceHref(role));
-  }
-
-  const rolePicker = (
-    <View style={styles.rolePicker}>
-      <Text style={styles.label}>Preview as</Text>
-      <View accessibilityRole="radiogroup" style={styles.roles}>
-        {roleOptions.map((choice) => (
-          <Pressable key={choice} accessibilityRole="radio" aria-checked={choice === role}
-            onPress={() => setRole(choice)} style={[styles.role, choice === role && styles.roleActive]}>
-            <Text style={[styles.switchLabel, choice === role && styles.activeLabel]}>{roles[choice].label}</Text>
-          </Pressable>
-        ))}
-      </View>
-    </View>
-  );
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <KeyboardAvoidingView style={styles.safeArea} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView ref={scroll} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scroll}>
-          <LinearGradient colors={['#071739', '#133CBA', '#087C99']} style={styles.hero}>
-            <View style={styles.halo} />
-            <View style={styles.brandHeader}><BrandLogo mark /><Text style={styles.brandName}>Laundly</Text></View>
-            <Text accessibilityRole="header" style={styles.heroTitle}>
-              Smart laundry operations, <Text style={styles.heroAccent}>beautifully synced.</Text>
-            </Text>
-          </LinearGradient>
+    <View style={styles.container}>
+      <Image source={background} style={StyleSheet.absoluteFill} contentFit="fill" accessible={false} />
+      <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+        <ScrollView contentContainerStyle={[styles.content, { paddingBottom: Math.max(insets.bottom, 24) + 14 }]}>
+          <View style={styles.brand}>
+            <BrandLogo markSize={128} />
+            <Text accessibilityRole="header" style={styles.title}>Laundly</Text>
+            <Text style={styles.tagline}>Smart laundry operations, beautifully synced.</Text>
+          </View>
 
-          <View style={styles.card} onLayout={(event) => { cardOffset.current = event.nativeEvent.layout.y; }}>
-            <View accessibilityRole="tablist" style={styles.switcher}>
-              {(['login', 'signup'] as const).map((choice) => (
-                <Pressable key={choice} accessibilityRole="tab" aria-selected={choice === mode}
-                  onPress={() => setMode(choice)} style={[styles.switchOption, choice === mode && styles.switchActive]}>
-                  <Text style={[styles.switchLabel, choice === mode && styles.activeLabel]}>
-                    {choice === 'login' ? 'Log in' : 'Sign up'}
-                  </Text>
+          <View style={styles.actions}>
+            <Text style={styles.roleLabel}>Preview as</Text>
+            <View accessibilityRole="radiogroup" style={styles.roles}>
+              {roleOptions.map((choice) => (
+                <Pressable key={choice} accessibilityRole="radio" aria-checked={role === choice}
+                  onPress={() => setRole(choice)} style={[styles.role, role === choice && styles.selectedRole]}>
+                  <Text style={[styles.roleText, role === choice && styles.selectedText]}>{roles[choice].label}</Text>
                 </Pressable>
               ))}
             </View>
-
-            <Form onContinue={enterWorkspace} rolePicker={rolePicker}
-              scrollTo={(y) => scroll.current?.scrollTo({ y: y + cardOffset.current, animated: true })} />
-
-            <Pressable accessibilityRole="button" onPress={enterWorkspace} style={styles.preview}>
-              <Text style={styles.activeLabel}>Explore the demo</Text>
+            <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: '/login', params: { role } })}
+              style={({ pressed }) => [styles.button, pressed && styles.pressed]}>
+              <Text style={styles.buttonLabel}>Log in</Text>
             </Pressable>
-            <Text style={styles.legal}>Static preview. Use sample details or explore the demo.</Text>
-            <TermsLink showAgreement={signingUp} />
+            <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: '/signup', params: { role } })}
+              style={({ pressed }) => [styles.button, styles.outlineButton, pressed && styles.pressed]}>
+              <Text style={[styles.buttonLabel, styles.whiteText]}>Sign up</Text>
+            </Pressable>
+            <Pressable accessibilityRole="button" onPress={() => router.push(workspaceHref(role))} style={styles.preview}>
+              <Text style={styles.roleText}>Explore the demo</Text>
+            </Pressable>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: colors.canvas },
-  scroll: { alignSelf: 'center', width: '100%', maxWidth: 520, padding: 18, paddingBottom: 24, gap: 15 },
-  hero: { overflow: 'hidden', borderRadius: 30, padding: 22 },
-  halo: { position: 'absolute', width: 250, height: 250, borderRadius: 125, borderWidth: 30,
-    borderColor: '#FFFFFF15', right: -108, top: -75 },
-  brandHeader: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  brandName: { color: colors.white, fontSize: 23, fontWeight: '800', letterSpacing: -0.5 },
-  heroTitle: { color: colors.white, fontSize: 32, fontWeight: '800', letterSpacing: -1.2, lineHeight: 36,
-    marginTop: 14, maxWidth: 390 },
-  heroAccent: { color: colors.teal },
-  card: { gap: 14, backgroundColor: colors.white, borderColor: colors.line, borderWidth: 1, borderRadius: 28,
-    padding: 18, boxShadow: cardShadow },
-  switcher: { flexDirection: 'row', borderRadius: 24, padding: 4, backgroundColor: colors.canvas },
-  switchOption: { minHeight: 42, justifyContent: 'center', alignItems: 'center', flex: 1, borderRadius: 22 },
-  switchActive: { backgroundColor: colors.white, boxShadow: '0px 1px 4px rgba(20, 43, 116, 0.12)' },
-  switchLabel: { fontSize: 13, color: colors.muted, fontWeight: '700', textAlign: 'center' },
-  activeLabel: { color: colors.blue, fontWeight: '800', textAlign: 'center' },
-  rolePicker: { gap: 6 },
-  label: { color: colors.ink, fontWeight: '700', fontSize: 13 },
-  roles: { flexDirection: 'row', gap: 7 },
-  role: { flex: 1, justifyContent: 'center', minHeight: 44, borderWidth: 1, borderColor: colors.line, borderRadius: 22 },
-  roleActive: { backgroundColor: colors.paleBlue, borderColor: '#B9CCFF' },
-  preview: { minHeight: 44, justifyContent: 'center', marginVertical: -5 },
-  legal: { textAlign: 'center', fontSize: 12, lineHeight: 18, color: colors.muted },
+  container: { flex: 1, backgroundColor: colors.blue },
+  safeArea: { flex: 1 },
+  content: { flexGrow: 1, paddingHorizontal: 32, alignSelf: 'center', width: '100%', maxWidth: 520 },
+  brand: { flexGrow: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 32, paddingBottom: 52 },
+  title: { color: colors.white, fontSize: 60, fontFamily: 'Inter_700Bold', letterSpacing: -1.5, textAlign: 'center' },
+  tagline: { marginTop: 4, color: colors.paleBlue, fontSize: 21, fontFamily: 'Inter_400Regular', textAlign: 'center' },
+  actions: { gap: 10 },
+  roles: { flexDirection: 'row', gap: 8, marginBottom: 6 },
+  role: { flex: 1, minHeight: 44, borderRadius: 22, borderColor: colors.white, borderWidth: 1,
+    alignItems: 'center', justifyContent: 'center' },
+  selectedRole: { backgroundColor: colors.white },
+  roleLabel: { color: colors.white, fontFamily: 'Inter_600SemiBold', fontSize: 13 },
+  roleText: { color: colors.white, fontFamily: 'Inter_600SemiBold', fontSize: 13, textAlign: 'center' },
+  selectedText: { color: colors.deepBlue },
+  button: { width: '100%', minHeight: 58, borderRadius: 30, alignItems: 'center', justifyContent: 'center',
+    paddingHorizontal: 20, paddingVertical: 12, backgroundColor: colors.white },
+  outlineButton: { backgroundColor: colors.deepBlue },
+  buttonLabel: { color: colors.ink, fontSize: 17, fontFamily: 'Inter_700Bold', textAlign: 'center' },
+  whiteText: { color: colors.white },
+  preview: { justifyContent: 'center', minHeight: 44 },
+  pressed: { opacity: 0.8 },
 });

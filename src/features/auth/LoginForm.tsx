@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 import { HugeiconsIcon } from '@hugeicons/react-native';
+import Tick02Icon from '@hugeicons/core-free-icons/Tick02Icon';
 import ViewIcon from '@hugeicons/core-free-icons/ViewIcon';
 import ViewOffIcon from '@hugeicons/core-free-icons/ViewOffIcon';
 import { colors } from '../../theme';
@@ -9,10 +10,12 @@ import { styles, type AuthFormProps } from './formStyles';
 import { useFormFocus } from './useFormFocus';
 import { isValidEmail } from './validation';
 
-export function LoginForm({ onContinue, scrollTo, rolePicker }: AuthFormProps) {
+export function LoginForm({ onContinue, scrollTo }: AuthFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
+  const [showResetNote, setShowResetNote] = useState(false);
   const formOffsetYRef = useRef(0);
   const loginForm = useFormFocus<'email' | 'password'>();
 
@@ -40,7 +43,7 @@ export function LoginForm({ onContinue, scrollTo, rolePicker }: AuthFormProps) {
   return (
     <View style={styles.form} onLayout={(event) => { formOffsetYRef.current = event.nativeEvent.layout.y; }}>
       <View style={styles.header}>
-        <Text accessibilityRole="header" style={styles.title}>Sign in to your account</Text>
+        <Text accessibilityRole="header" style={styles.title}>{'Sign in to your\nAccount'}</Text>
         <Text style={styles.subtitle}>Enter your email and password to log in</Text>
       </View>
       <ShakeableField
@@ -118,7 +121,21 @@ export function LoginForm({ onContinue, scrollTo, rolePicker }: AuthFormProps) {
         </View>
         <FieldError message={loginForm.errors.password} />
       </ShakeableField>
-      {rolePicker}
+      <View style={styles.optionsRow}>
+        <Pressable accessibilityRole="checkbox" aria-checked={rememberMe}
+          onPress={() => setRememberMe((checked) => !checked)} style={styles.rememberRow} hitSlop={8}>
+          <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]}>
+            {rememberMe && <HugeiconsIcon icon={Tick02Icon} size={12} color={colors.white} strokeWidth={2.6} />}
+          </View>
+          <Text style={styles.rememberText}>Remember me</Text>
+        </Pressable>
+        <Pressable accessibilityRole="button" onPress={() => setShowResetNote((visible) => !visible)} hitSlop={8}>
+          <Text style={styles.forgotText}>Forgot password?</Text>
+        </Pressable>
+      </View>
+      {showResetNote && <Text accessibilityRole="alert" style={styles.rememberText}>
+        Password reset is unavailable in the local preview.
+      </Text>}
       <Pressable accessibilityRole="button" onPress={handleLogin}
         style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}>
         <Text style={styles.primaryLabel}>Log in</Text>

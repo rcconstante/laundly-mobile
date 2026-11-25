@@ -14,6 +14,10 @@
       "bundler": "metro",
       "favicon": "./assets/brand/laundly-icon.png"
     },
-    "plugins": ["expo-router", "expo-image"]
+    "plugins": [
+      "expo-router",
+      "expo-image",
+      "expo-font"
+    ]
   }
 }
