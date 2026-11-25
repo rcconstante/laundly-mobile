@@ -9,16 +9,20 @@ export function FloatingTabBar({ role }: { role: Role }) {
   const insets = useSafeAreaInsets();
   const { tab: currentTab } = useGlobalSearchParams<{ tab?: string }>();
 
+  const parentTab = role === 'owner' && currentTab === 'new-load' ? 'orders'
+    : role === 'owner' && ['branches', 'customers', 'pricing', 'profile'].some((route) => route === currentTab)
+      ? 'more' : currentTab;
+
   return (
     <View accessibilityRole="tablist" style={[styles.bar, { bottom: Math.max(insets.bottom, 12) + 8 }]}>
       {roles[role].tabs.map((tab) => {
-        const focused = tab === currentTab;
+        const focused = tab === parentTab;
         const color = focused ? colors.blue : colors.muted;
         const { label, icon } = tabs[tab];
 
         return (
           <Pressable key={tab} accessibilityRole="tab" accessibilityLabel={label} aria-selected={focused}
-            onPress={() => { if (!focused) router.replace(workspaceHref(role, tab)); }}
+            onPress={() => { if (tab !== currentTab) router.replace(workspaceHref(role, tab)); }}
             style={({ pressed }) => [styles.item, focused && styles.active, pressed && styles.pressed]}>
             <HugeiconsIcon icon={icon} size={23} strokeWidth={focused ? 2.2 : 1.8} color={color} />
             <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={[styles.label, { color }]}>

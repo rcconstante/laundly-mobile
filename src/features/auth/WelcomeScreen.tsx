@@ -1,71 +1,73 @@
-import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { BrandLogo } from '../../shared/brand/BrandLogo';
 import { colors } from '../../theme';
 import { roleOptions, roles, workspaceHref, type Role } from '../workspace/roles';
 
-const background = require('../../../assets/brand/onboarding-background.webp');
-
 export function WelcomeScreen() {
-  const insets = useSafeAreaInsets();
   const [role, setRole] = useState<Role>('client');
 
   return (
-    <View style={styles.container}>
-      <Image source={background} style={StyleSheet.absoluteFill} contentFit="fill" accessible={false} />
-      <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-        <ScrollView contentContainerStyle={[styles.content, { paddingBottom: Math.max(insets.bottom, 24) + 14 }]}>
-          <View style={styles.brand}>
-            <BrandLogo markSize={128} />
-            <Text accessibilityRole="header" style={styles.title}>Laundly</Text>
-            <Text style={styles.tagline}>Smart laundry operations, beautifully synced.</Text>
+    <SafeAreaView style={styles.root}>
+      <View pointerEvents="none" style={styles.blueCircle} />
+      <View pointerEvents="none" style={styles.tealCircle} />
+      <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.hero}>
+          <View pointerEvents="none" style={styles.orbit} />
+          <BrandLogo markSize={112} />
+          <Text accessibilityRole="header" style={styles.title}>Laundly</Text>
+          <Text style={styles.tagline}>Smart laundry operations, beautifully synced.</Text>
+        </View>
+        <View style={styles.panel}>
+          <Text style={styles.label}>Preview as</Text>
+          <View accessibilityRole="radiogroup" style={styles.roles}>
+            {roleOptions.map((choice) => (
+              <Pressable key={choice} accessibilityRole="radio" aria-checked={role === choice}
+                onPress={() => setRole(choice)} style={[styles.role, role === choice && styles.selectedRole]}>
+                <Text style={[styles.roleText, role === choice && styles.selectedText]}>{roles[choice].label}</Text>
+              </Pressable>
+            ))}
           </View>
-
-          <View style={styles.actions}>
-            <Text style={styles.roleLabel}>Preview as</Text>
-            <View accessibilityRole="radiogroup" style={styles.roles}>
-              {roleOptions.map((choice) => (
-                <Pressable key={choice} accessibilityRole="radio" aria-checked={role === choice}
-                  onPress={() => setRole(choice)} style={[styles.role, role === choice && styles.selectedRole]}>
-                  <Text style={[styles.roleText, role === choice && styles.selectedText]}>{roles[choice].label}</Text>
-                </Pressable>
-              ))}
-            </View>
-            <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: '/login', params: { role } })}
-              style={({ pressed }) => [styles.button, pressed && styles.pressed]}>
-              <Text style={styles.buttonLabel}>Get started</Text>
-            </Pressable>
-            <Pressable accessibilityRole="button" onPress={() => router.push(workspaceHref(role))} style={styles.preview}>
-              <Text style={styles.roleText}>Explore the demo</Text>
-            </Pressable>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </View>
+          <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: '/login', params: { role } })}
+            style={({ pressed }) => [styles.button, pressed && styles.pressed]}>
+            <Text style={styles.buttonLabel}>Get started</Text>
+          </Pressable>
+          <Pressable accessibilityRole="button" onPress={() => router.push(workspaceHref(role))} style={styles.preview}>
+            <Text style={styles.previewLabel}>Explore the demo</Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.blue },
-  safeArea: { flex: 1 },
-  content: { flexGrow: 1, paddingHorizontal: 32, alignSelf: 'center', width: '100%', maxWidth: 520 },
-  brand: { flexGrow: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 32, paddingBottom: 52 },
-  title: { color: colors.white, fontSize: 60, fontFamily: 'Inter_700Bold', letterSpacing: -1.5, textAlign: 'center' },
-  tagline: { marginTop: 4, color: colors.paleBlue, fontSize: 21, fontFamily: 'Inter_400Regular', textAlign: 'center' },
-  actions: { gap: 10 },
-  roles: { flexDirection: 'row', gap: 8, marginBottom: 6 },
-  role: { flex: 1, minHeight: 44, borderRadius: 22, borderColor: colors.white, borderWidth: 1,
+  root: { flex: 1, overflow: 'hidden', backgroundColor: '#F4F8FF' },
+  blueCircle: { position: 'absolute', top: -125, right: -135, width: 380, height: 380,
+    borderRadius: 190, backgroundColor: '#E1EBFF' },
+  tealCircle: { position: 'absolute', bottom: -155, left: -140, width: 405, height: 405,
+    borderRadius: 203, backgroundColor: '#DDF8F2' },
+  content: { flexGrow: 1, width: '100%', maxWidth: 480, alignSelf: 'center', padding: 24 },
+  hero: { flexGrow: 1, minHeight: 345, alignItems: 'center', justifyContent: 'center', gap: 14 },
+  orbit: { position: 'absolute', top: '13%', width: 215, height: 215, borderRadius: 108,
+    borderWidth: 1, borderColor: '#C9DAFC' },
+  title: { color: colors.ink, fontFamily: 'Inter_700Bold', fontSize: 57, letterSpacing: -3 },
+  tagline: { color: colors.muted, fontFamily: 'Inter_400Regular', fontSize: 17, lineHeight: 25,
+    textAlign: 'center', maxWidth: 260 },
+  panel: { gap: 10, padding: 16, backgroundColor: colors.white, borderRadius: 27,
+    borderWidth: 1, borderColor: colors.line, boxShadow: '0px 12px 34px rgba(8, 24, 67, 0.08)' },
+  label: { color: colors.muted, fontFamily: 'Inter_600SemiBold', fontSize: 12 },
+  roles: { flexDirection: 'row', gap: 7, marginBottom: 3 },
+  role: { flex: 1, borderWidth: 1, borderColor: colors.line, borderRadius: 22, minHeight: 44,
     alignItems: 'center', justifyContent: 'center' },
-  selectedRole: { backgroundColor: colors.white },
-  roleLabel: { color: colors.white, fontFamily: 'Inter_600SemiBold', fontSize: 13 },
-  roleText: { color: colors.white, fontFamily: 'Inter_600SemiBold', fontSize: 13, textAlign: 'center' },
-  selectedText: { color: colors.deepBlue },
-  button: { width: '100%', minHeight: 58, borderRadius: 30, alignItems: 'center', justifyContent: 'center',
-    paddingHorizontal: 20, paddingVertical: 12, backgroundColor: colors.white },
-  buttonLabel: { color: colors.ink, fontSize: 17, fontFamily: 'Inter_700Bold', textAlign: 'center' },
-  preview: { justifyContent: 'center', minHeight: 44 },
-  pressed: { opacity: 0.8 },
+  selectedRole: { backgroundColor: colors.paleBlue, borderColor: '#B7CBFF' },
+  roleText: { color: colors.muted, fontFamily: 'Inter_600SemiBold', fontSize: 13 },
+  selectedText: { color: colors.blue },
+  button: { minHeight: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.blue },
+  buttonLabel: { color: colors.white, fontFamily: 'Inter_700Bold', fontSize: 15 },
+  preview: { minHeight: 44, alignItems: 'center', justifyContent: 'center' },
+  previewLabel: { color: colors.blue, fontFamily: 'Inter_600SemiBold', fontSize: 13 },
+  pressed: { opacity: 0.82 },
 });

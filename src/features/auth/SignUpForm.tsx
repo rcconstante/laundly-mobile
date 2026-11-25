@@ -9,15 +9,13 @@ import { styles, type AuthFormProps } from './formStyles';
 import { useFormFocus } from './useFormFocus';
 import { isStrongPassword, isValidEmail } from './validation';
 
-type SignUpField = 'fullName' | 'email' | 'password' | 'confirmPassword';
+type SignUpField = 'fullName' | 'email' | 'password';
 
 export function SignUpForm({ onContinue, scrollTo }: AuthFormProps) {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const formOffsetYRef = useRef(0);
   const signUpForm = useFormFocus<SignUpField>();
 
@@ -32,21 +30,14 @@ export function SignUpForm({ onContinue, scrollTo }: AuthFormProps) {
     if (!isStrongPassword(password)) {
       fieldErrors.password = 'Use at least 8 characters with both letters and numbers.';
     }
-    if (!confirmPassword) {
-      fieldErrors.confirmPassword = 'Please confirm your password.';
-    } else if (password !== confirmPassword) {
-      fieldErrors.confirmPassword = 'Passwords do not match.';
-    }
 
-    if (signUpForm.reportErrors(fieldErrors, ['fullName', 'email', 'password', 'confirmPassword'], {
+    if (signUpForm.reportErrors(fieldErrors, ['fullName', 'email', 'password'], {
       scrollTo,
       containerOffsetY: formOffsetYRef.current,
     })) return;
 
     setPassword('');
-    setConfirmPassword('');
     setShowPassword(false);
-    setShowConfirmPassword(false);
     onContinue();
   }
 
@@ -140,8 +131,8 @@ export function SignUpForm({ onContinue, scrollTo }: AuthFormProps) {
             placeholderTextColor={colors.muted}
             secureTextEntry={!showPassword}
             autoCapitalize="none"
-            returnKeyType="next"
-            onSubmitEditing={() => signUpForm.focusInput('confirmPassword')}
+            returnKeyType="done"
+            onSubmitEditing={handleSignUp}
             style={styles.input}
           />
           <Pressable
@@ -161,52 +152,6 @@ export function SignUpForm({ onContinue, scrollTo }: AuthFormProps) {
         <FieldError message={signUpForm.errors.password} />
       </ShakeableField>
 
-      <ShakeableField
-        shakeKey={signUpForm.getShakeKey('confirmPassword')}
-        onLayout={signUpForm.registerLayout('confirmPassword')}
-        style={styles.fieldGroup}
-      >
-        <Text style={styles.label}>Confirm password</Text>
-        <View
-          style={[
-            styles.inputBox,
-            signUpForm.errors.confirmPassword ? styles.inputBoxError : null,
-          ]}
-        >
-          <TextInput
-            ref={signUpForm.registerInput('confirmPassword')}
-            accessibilityLabel="Confirm password" autoComplete="new-password"
-            value={confirmPassword}
-            onChangeText={(text) => {
-              setConfirmPassword(text);
-              signUpForm.clearError('confirmPassword');
-            }}
-            placeholder="Confirm password"
-            placeholderTextColor={colors.muted}
-            secureTextEntry={!showConfirmPassword}
-            autoCapitalize="none"
-            returnKeyType="done"
-            onSubmitEditing={handleSignUp}
-            style={styles.input}
-          />
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={
-              showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'
-            }
-            onPress={() => setShowConfirmPassword((prev) => !prev)}
-            style={styles.eye}
-          >
-            <HugeiconsIcon
-              icon={showConfirmPassword ? ViewIcon : ViewOffIcon}
-              size={19}
-              color={colors.muted}
-              strokeWidth={1.8}
-            />
-          </Pressable>
-        </View>
-        <FieldError message={signUpForm.errors.confirmPassword} />
-      </ShakeableField>
       <Pressable accessibilityRole="button" onPress={handleSignUp}
         style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}>
         <Text style={styles.primaryLabel}>Sign up</Text>

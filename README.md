@@ -4,18 +4,23 @@
 
 Expo and React Native preview for laundry shop owners, clients, and riders.
 
-## Local development
+## Run locally
 
 ```sh
 npm ci
 npm start
 ```
 
-Run `npm run android` or `npm run ios` to open a native target. Run `npm run web` for a browser preview.
+Use `npm run android`, `npm run ios`, or `npm run web` to select a target.
 
-Select a role on the welcome screen and choose **Explore the demo** to open its workspace. Choose **Get started** to switch between login and signup. Use sample details for both forms. The Manke login and signup forms use local validation in this preview. The role pages are blank with a shared Laundly header and floating navigation. The app links to [Privacy Policy](https://laundly.vercel.app/privacy) and [Terms and Conditions](https://laundly.vercel.app/terms) on the Laundly website.
+## Try the preview
 
-| Role | Tabs |
+- Choose **Owner**, then **Explore the demo**. Create a branch and use **Customers** and **Pricing** to add a customer and service. Create a load, advance it in **Orders**, and record payment. **Reports** and **Today’s sales** use the recorded payment date.
+- Use the branch switcher to create a second location or return to the first. Each branch keeps its own machines, pricing, customers, orders, and sales.
+- **Get started** opens login and signup. For password reset, use a sample email and demo code `123456`. The preview does not send email or authenticate accounts.
+- Profile details, preferences, and owner data are stored on the device. Account preferences are scoped to each preview role.
+
+| Role | Main tabs |
 | --- | --- |
 | Owner | Home, Orders, Machines, Reports, More |
 | Client | Home, Orders, Book, Inbox, Profile |
@@ -23,11 +28,9 @@ Select a role on the welcome screen and choose **Explore the demo** to open its 
 
 ## Project layout
 
-- `src/app/` contains Expo Router routes.
-- `src/features/auth/` contains onboarding and the preview forms.
-- `src/features/workspace/` contains role navigation, and the shared workspace shell.
-- `src/shared/` contains reusable brand and legal components.
-- `src/theme.ts` holds shared colors and shadows.
-- `assets/brand/` holds the launcher icon and WebP artwork.
+- `src/app/` contains Expo Router entry points.
+- `src/entities/owner/` contains the branch model, business rules, and storage adapter.
+- `src/features/` contains authentication, owner screens, profile, and workspace navigation.
+- `src/shared/` contains reusable UI, brand assets, and legal links.
 
 Run `npm run lint` and `npm run typecheck` to check changes.

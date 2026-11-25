@@ -9,12 +9,14 @@ const pages: LegalModalTarget[] = [
   { title: 'Terms and Conditions', url: site + '/terms' },
 ];
 
-export function LegalLinks() {
+const cookies = { title: 'Cookies', url: site + '/cookies' };
+
+export function LegalLinks({ includeCookies = false }: { includeCookies?: boolean }) {
   const [target, setTarget] = useState<LegalModalTarget | null>(null);
 
   return (
     <View style={styles.row}>
-      {pages.map((page) => (
+      {(includeCookies ? [...pages, cookies] : pages).map((page) => (
         <Pressable key={page.url} accessibilityRole="link" onPress={() => setTarget(page)} style={styles.item}>
           <Text style={styles.link}>{page.title}</Text>
         </Pressable>

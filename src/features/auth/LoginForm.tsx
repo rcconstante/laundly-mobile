@@ -10,12 +10,11 @@ import { styles, type AuthFormProps } from './formStyles';
 import { useFormFocus } from './useFormFocus';
 import { isValidEmail } from './validation';
 
-export function LoginForm({ onContinue, scrollTo }: AuthFormProps) {
+export function LoginForm({ onContinue, scrollTo, onForgotPassword }: AuthFormProps & { onForgotPassword: () => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
-  const [showResetNote, setShowResetNote] = useState(false);
   const formOffsetYRef = useRef(0);
   const loginForm = useFormFocus<'email' | 'password'>();
 
@@ -127,13 +126,10 @@ export function LoginForm({ onContinue, scrollTo }: AuthFormProps) {
           </View>
           <Text style={styles.rememberText}>Remember me</Text>
         </Pressable>
-        <Pressable accessibilityRole="button" onPress={() => setShowResetNote((visible) => !visible)} hitSlop={8}>
+        <Pressable accessibilityRole="button" onPress={onForgotPassword} hitSlop={8}>
           <Text style={styles.forgotText}>Forgot password?</Text>
         </Pressable>
       </View>
-      {showResetNote && <Text accessibilityRole="alert" style={styles.rememberText}>
-        Password reset is unavailable in the local preview.
-      </Text>}
       <Pressable accessibilityRole="button" onPress={handleLogin}
         style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}>
         <Text style={styles.primaryLabel}>Log in</Text>

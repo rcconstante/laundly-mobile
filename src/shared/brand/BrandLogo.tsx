@@ -9,7 +9,7 @@ export function BrandLogo({ markSize }: { markSize: number }) {
       contentFit="contain"
       accessibilityLabel="Laundly"
       accessible
-      style={{ width: markSize, height: markSize, borderRadius: Math.round(markSize * 0.26) }}
+      style={{ width: markSize, height: markSize }}
     />
   );
 }

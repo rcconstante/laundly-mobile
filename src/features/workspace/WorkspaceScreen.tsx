@@ -1,13 +1,16 @@
+import { OwnerWorkspace } from '../owner/OwnerWorkspace';
+import { ProfileScreen } from '../profile/ProfileScreen';
 import Logout01Icon from '@hugeicons/core-free-icons/Logout01Icon';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { router } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BrandLogo } from '../../shared/brand/BrandLogo';
 import { colors } from '../../theme';
-import { roles, tabs, type Role, type Tab } from './roles';
+import { roles, type Destination, type Role } from './roles';
 
-export function WorkspaceScreen({ role, tab }: { role: Role; tab: Tab }) {
+export function WorkspaceScreen({ role, tab }: { role: Role; tab: Destination }) {
+  const insets = useSafeAreaInsets();
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
       <View style={styles.header}>
@@ -21,7 +24,10 @@ export function WorkspaceScreen({ role, tab }: { role: Role; tab: Tab }) {
           <HugeiconsIcon icon={Logout01Icon} size={21} color={colors.blue} />
         </Pressable>
       </View>
-      <View accessibilityLabel={tabs[tab].label} style={styles.page} />
+      <ScrollView keyboardShouldPersistTaps="handled"
+        contentContainerStyle={[styles.page, { paddingBottom: Math.max(insets.bottom, 12) + 94 }]}>
+        {role === 'owner' ? <OwnerWorkspace destination={tab} /> : tab === 'profile' ? <ProfileScreen role={role} /> : null}
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -35,5 +41,5 @@ const styles = StyleSheet.create({
   roleName: { color: colors.muted, fontSize: 12, lineHeight: 16, fontFamily: 'Inter_600SemiBold' },
   exit: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.white, borderWidth: 1,
     borderColor: colors.line, alignItems: 'center', justifyContent: 'center' },
-  page: { flex: 1 },
+  page: { width: '100%', maxWidth: 580, alignSelf: 'center', paddingTop: 4, paddingHorizontal: 18, gap: 14 },
 });

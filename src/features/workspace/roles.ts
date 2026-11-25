@@ -1,7 +1,7 @@
 import AnalyticsUpIcon from '@hugeicons/core-free-icons/AnalyticsUpIcon';
 import Calendar03Icon from '@hugeicons/core-free-icons/Calendar03Icon';
 import CheckListIcon from '@hugeicons/core-free-icons/CheckListIcon';
-import Home01Icon from '@hugeicons/core-free-icons/Home01Icon';
+import Home03Icon from '@hugeicons/core-free-icons/Home03Icon';
 import Mail01Icon from '@hugeicons/core-free-icons/Mail01Icon';
 import MapsLocation01Icon from '@hugeicons/core-free-icons/MapsLocation01Icon';
 import MoreHorizontalIcon from '@hugeicons/core-free-icons/MoreHorizontalIcon';
@@ -11,7 +11,7 @@ import Wallet01Icon from '@hugeicons/core-free-icons/Wallet01Icon';
 import WashingMachineIcon from '@hugeicons/core-free-icons/WashingMachineIcon';
 
 export const tabs = {
-  home: { label: 'Home', icon: Home01Icon },
+  home: { label: 'Home', icon: Home03Icon },
   orders: { label: 'Orders', icon: PackageIcon },
   machines: { label: 'Machines', icon: WashingMachineIcon },
   reports: { label: 'Reports', icon: AnalyticsUpIcon },
@@ -25,6 +25,8 @@ export const tabs = {
 };
 
 export type Tab = keyof typeof tabs;
+const ownerDestinations = ['branches', 'new-load', 'customers', 'pricing', 'profile'] as const;
+export type Destination = Tab | typeof ownerDestinations[number];
 
 type RoleDefinition = { label: string; tabs: readonly Tab[] };
 
@@ -41,10 +43,11 @@ export function isRole(value: string): value is Role {
   return Object.hasOwn(roles, value);
 }
 
-export function isRoleTab(role: Role, value: string): value is Tab {
-  return roles[role].tabs.some((tab) => tab === value);
+export function isRoleTab(role: Role, value: string): value is Destination {
+  return roles[role].tabs.some((tab) => tab === value) ||
+    (role === 'owner' && ownerDestinations.some((destination) => destination === value));
 }
 
-export function workspaceHref(role: Role, tab: Tab = 'home') {
+export function workspaceHref(role: Role, tab: Destination = 'home') {
   return { pathname: '/workspace/[role]/[tab]' as const, params: { role, tab } };
 }

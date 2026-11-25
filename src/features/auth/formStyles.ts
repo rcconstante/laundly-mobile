@@ -23,7 +23,7 @@ export const styles = StyleSheet.create({
   checkboxChecked: { backgroundColor: colors.blue, borderColor: colors.blue },
   rememberText: { fontSize: 12, color: colors.muted, fontFamily: 'Inter_400Regular' },
   forgotText: { fontSize: 12, fontFamily: 'Inter_600SemiBold', color: colors.blue },
-  primaryButton: { minHeight: 50, borderRadius: 12, backgroundColor: colors.blue,
+  primaryButton: { minHeight: 50, borderRadius: 26, backgroundColor: colors.blue,
     alignItems: 'center', justifyContent: 'center' },
   primaryLabel: { color: colors.white, fontSize: 15, fontFamily: 'Inter_600SemiBold' },
   pressed: { opacity: 0.8 },

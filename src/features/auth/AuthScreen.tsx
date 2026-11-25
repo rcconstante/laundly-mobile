@@ -21,7 +21,10 @@ export function AuthScreen({ mode }: { mode: 'login' | 'signup' }) {
   const role = roleParam && isRole(roleParam) ? roleParam : 'client';
   const insets = useSafeAreaInsets();
   const scroll = useRef<ComponentRef<typeof ScrollView>>(null);
-  const Form = mode === 'signup' ? SignUpForm : LoginForm;
+  const formProps = {
+    onContinue: () => router.replace(workspaceHref(role)),
+    scrollTo: (y: number) => scroll.current?.scrollTo({ y, animated: true }),
+  };
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
@@ -52,8 +55,9 @@ export function AuthScreen({ mode }: { mode: 'login' | 'signup' }) {
             })}
           </View>
 
-          <Form onContinue={() => router.replace(workspaceHref(role))}
-            scrollTo={(y) => scroll.current?.scrollTo({ y, animated: true })} />
+          {mode === 'signup' ? <SignUpForm {...formProps} /> : (
+            <LoginForm {...formProps} onForgotPassword={() => router.push({ pathname: '/forgot-password', params: { role } })} />
+          )}
 
           <View style={styles.footer}><LegalLinks /></View>
         </ScrollView>
