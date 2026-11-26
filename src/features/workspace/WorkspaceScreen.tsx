@@ -6,6 +6,7 @@ import { router } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BrandLogo } from '../../shared/brand/BrandLogo';
+import { LaundryBackdrop } from '../../shared/brand/LaundryBackdrop';
 import { brandName } from '../../shared/brand/brand';
 import { colors } from '../../theme';
 import { roles, type Destination, type Role } from './roles';
@@ -14,6 +15,7 @@ export function WorkspaceScreen({ role, tab }: { role: Role; tab: Destination })
   const insets = useSafeAreaInsets();
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
+      {tab === 'profile' && <LaundryBackdrop />}
       <View style={styles.header}>
         <View style={styles.brand}>
           <BrandLogo markSize={36} />

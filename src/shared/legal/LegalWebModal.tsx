@@ -1,229 +1,87 @@
 import { useState } from 'react';
-import {
-  ActivityIndicator,
-  Modal,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ActivityIndicator, Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import Cancel01Icon from '@hugeicons/core-free-icons/Cancel01Icon';
 import { colors } from '../../theme';
 
-export type LegalModalTarget = {
-  title: string;
-  url: string;
-};
+export type LegalModalTarget = { title: string; url: string };
 
-type LegalWebModalProps = {
-  target: LegalModalTarget | null;
-  onClose: () => void;
-};
+export function LegalPageContent({ target }: { target: LegalModalTarget }) {
+  const [failed, setFailed] = useState(false);
 
-export function LegalWebModal({ target, onClose }: LegalWebModalProps) {
-  const insets = useSafeAreaInsets();
-  const [failedUrl, setFailedUrl] = useState<string | null>(null);
-  const [reloadKey, setReloadKey] = useState(0);
+  if (failed) {
+    return (
+      <View style={styles.errorState}>
+        <Text style={styles.errorTitle}>Unable to load page</Text>
+        <Text style={styles.errorBody}>Check your connection and try again.</Text>
+        <Pressable accessibilityRole="button" onPress={() => setFailed(false)} style={styles.retry}>
+          <Text style={styles.retryLabel}>Try again</Text>
+        </Pressable>
+      </View>
+    );
+  }
 
-  const hasError = Boolean(target && failedUrl === target.url);
-
-  const handleClose = () => {
-    setFailedUrl(null);
-    onClose();
-  };
+  if (Platform.OS === 'web') {
+    return (
+      <View style={styles.body}>
+        <iframe title={target.title} src={target.url} style={{ width: '100%', height: '100%', border: 'none' }} />
+      </View>
+    );
+  }
 
   return (
-    <Modal
-      visible={Boolean(target)}
-      animationType="slide"
-      presentationStyle="pageSheet"
-      onRequestClose={handleClose}
-    >
-      <SafeAreaView
-        style={[
-          styles.container,
-          { backgroundColor: colors.canvas, paddingBottom: Platform.OS === 'android' ? insets.bottom : 0 },
-        ]}
-        edges={['top', 'bottom']}
-      >
-        <View
-          style={[
-            styles.header,
-            { backgroundColor: colors.white, borderBottomColor: colors.line },
-          ]}
-        >
+    <WebView
+      source={{ uri: target.url }}
+      style={styles.body}
+      startInLoadingState
+      onError={() => setFailed(true)}
+      onHttpError={(event) => { if (event.nativeEvent.statusCode >= 400) setFailed(true); }}
+      renderLoading={() => (
+        <View style={styles.loading}>
+          <ActivityIndicator size="large" color={colors.blue} />
+          <Text style={styles.url}>Loading {target.title}…</Text>
+        </View>
+      )}
+    />
+  );
+}
+
+export function LegalWebModal({ target, onClose }: { target: LegalModalTarget | null; onClose: () => void }) {
+  if (!target) return null;
+
+  return (
+    <Modal animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
+      <SafeAreaView style={styles.root}>
+        <View style={styles.header}>
           <View style={styles.headerText}>
-            <Text style={[styles.title, { color: colors.ink }]} numberOfLines={1}>
-              {target?.title ?? ''}
-            </Text>
-            <Text style={[styles.url, { color: colors.muted }]} numberOfLines={1}>
-              {target?.url ?? ''}
-            </Text>
+            <Text style={styles.title} numberOfLines={1}>{target.title}</Text>
+            <Text style={styles.url} numberOfLines={1}>{target.url}</Text>
           </View>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Close popup"
-            onPress={handleClose}
-            style={({ pressed }) => [
-              styles.closeButton,
-              { backgroundColor: colors.paleBlue },
-              pressed && styles.pressed,
-            ]}
-          >
-            <HugeiconsIcon
-              icon={Cancel01Icon}
-              size={20}
-              color={colors.ink}
-              strokeWidth={2}
-            />
+          <Pressable accessibilityRole="button" accessibilityLabel="Close popup" onPress={onClose} style={styles.close}>
+            <HugeiconsIcon icon={Cancel01Icon} size={20} color={colors.ink} strokeWidth={2} />
           </Pressable>
         </View>
-
-        {target ? (
-          hasError ? (
-            <View style={styles.errorState}>
-              <Text style={[styles.errorTitle, { color: colors.ink }]}>
-                Unable to load page
-              </Text>
-              <Text style={[styles.errorBody, { color: colors.muted }]}>
-                Make sure you have an internet connection and that {target.url} is live.
-              </Text>
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => {
-                  setFailedUrl(null);
-                  setReloadKey((k) => k + 1);
-                }}
-                style={({ pressed }) => [
-                  styles.retryButton,
-                  { backgroundColor: colors.blue },
-                  pressed && styles.pressed,
-                ]}
-              >
-                <Text style={styles.retryLabel}>Try Again</Text>
-              </Pressable>
-            </View>
-          ) : Platform.OS === 'web' ? (
-            <View style={styles.webFrameWrap}>
-              <iframe
-                title={target.title}
-                src={target.url}
-                style={{ width: '100%', height: '100%', border: 'none' }}
-              />
-            </View>
-          ) : (
-            <WebView
-              key={`${target.url}-${reloadKey}`}
-              source={{ uri: target.url }}
-              style={styles.webview}
-              startInLoadingState
-              onError={() => setFailedUrl(target.url)}
-              onHttpError={(event) => {
-                if (event.nativeEvent.statusCode >= 400) {
-                  setFailedUrl(target.url);
-                }
-              }}
-              renderLoading={() => (
-                <View style={[styles.loadingOverlay, { backgroundColor: colors.canvas }]}>
-                  <ActivityIndicator size="large" color={colors.blue} />
-                  <Text style={[styles.loadingText, { color: colors.muted }]}>
-                    Loading {target.title}…
-                  </Text>
-                </View>
-              )}
-            />
-          )
-        ) : null}
+        <LegalPageContent key={target.url} target={target} />
       </SafeAreaView>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 18,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    gap: 12,
-  },
-  headerText: {
-    flex: 1,
-  },
-  title: {
-    fontSize: 16,
-    fontFamily: 'Inter_700Bold',
-  },
-  url: {
-    marginTop: 2,
-    fontSize: 12,
-    fontFamily: 'Inter_400Regular',
-  },
-  closeButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pressed: {
-    opacity: 0.75,
-  },
-  webview: {
-    flex: 1,
-  },
-  webFrameWrap: {
-    flex: 1,
-  },
-  loadingOverlay: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-  },
-  loadingText: {
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
-  },
-  errorState: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 32,
-    gap: 12,
-  },
-  errorTitle: {
-    fontSize: 18,
-    fontFamily: 'Inter_700Bold',
-  },
-  errorBody: {
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  retryButton: {
-    marginTop: 8,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 24,
-  },
-  retryLabel: {
-    color: '#FFFFFF',
-    fontSize: 15,
-    fontFamily: 'Inter_600SemiBold',
-  },
+  root: { flex: 1, backgroundColor: colors.canvas },
+  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 18, paddingVertical: 10, gap: 12,
+    borderBottomWidth: 1, borderBottomColor: colors.line, backgroundColor: colors.white },
+  headerText: { flex: 1 },
+  title: { color: colors.ink, fontSize: 16, fontFamily: 'Inter_700Bold' },
+  url: { color: colors.muted, marginTop: 2, fontSize: 12, fontFamily: 'Inter_400Regular' },
+  close: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.paleBlue },
+  body: { flex: 1 },
+  loading: { ...StyleSheet.absoluteFill, alignItems: 'center', justifyContent: 'center', gap: 10, backgroundColor: colors.canvas },
+  errorState: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, gap: 10 },
+  errorTitle: { color: colors.ink, fontSize: 18, fontFamily: 'Inter_700Bold' },
+  errorBody: { color: colors.muted, fontSize: 14, fontFamily: 'Inter_400Regular', textAlign: 'center' },
+  retry: { backgroundColor: colors.blue, minHeight: 44, justifyContent: 'center', borderRadius: 22, paddingHorizontal: 24 },
+  retryLabel: { color: colors.white, fontSize: 14, fontFamily: 'Inter_600SemiBold' },
 });

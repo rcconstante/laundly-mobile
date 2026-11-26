@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BrandLogo } from '../../shared/brand/BrandLogo';
+import { LaundryBackdrop } from '../../shared/brand/LaundryBackdrop';
 import { brandName } from '../../shared/brand/brand';
 import { colors } from '../../theme';
 import { roleOptions, roles, workspaceHref, type Role } from '../workspace/roles';
@@ -12,11 +13,9 @@ export function WelcomeScreen() {
 
   return (
     <SafeAreaView style={styles.root}>
-      <View pointerEvents="none" style={styles.blueCircle} />
-      <View pointerEvents="none" style={styles.tealCircle} />
+      <LaundryBackdrop />
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.hero}>
-          <View pointerEvents="none" style={styles.orbit} />
           <BrandLogo markSize={112} />
           <Text accessibilityRole="header" style={styles.title}>{brandName}</Text>
           <Text style={styles.tagline}>Smart laundry operations, beautifully synced.</Text>
@@ -46,14 +45,8 @@ export function WelcomeScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, overflow: 'hidden', backgroundColor: '#F4F8FF' },
-  blueCircle: { position: 'absolute', top: -125, right: -135, width: 380, height: 380,
-    borderRadius: 190, backgroundColor: '#E1EBFF' },
-  tealCircle: { position: 'absolute', bottom: -155, left: -140, width: 405, height: 405,
-    borderRadius: 203, backgroundColor: '#DDF8F2' },
   content: { flexGrow: 1, width: '100%', maxWidth: 480, alignSelf: 'center', padding: 24 },
   hero: { flexGrow: 1, minHeight: 345, alignItems: 'center', justifyContent: 'center', gap: 14 },
-  orbit: { position: 'absolute', top: '13%', width: 215, height: 215, borderRadius: 108,
-    borderWidth: 1, borderColor: '#C9DAFC' },
   title: { color: colors.ink, fontFamily: 'Inter_700Bold', fontSize: 57, letterSpacing: -3 },
   tagline: { color: colors.muted, fontFamily: 'Inter_400Regular', fontSize: 17, lineHeight: 25,
     textAlign: 'center', maxWidth: 260 },

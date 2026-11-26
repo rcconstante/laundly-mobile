@@ -11,13 +11,13 @@ const pages: LegalModalTarget[] = [
 
 const cookies = { title: 'Cookies', url: websiteUrl + '/cookies' };
 
-export function LegalLinks({ includeCookies = false }: { includeCookies?: boolean }) {
+export function LegalLinks({ includeCookies = false, onOpen }: { includeCookies?: boolean; onOpen?: (page: LegalModalTarget) => void }) {
   const [target, setTarget] = useState<LegalModalTarget | null>(null);
 
   return (
     <View style={styles.row}>
       {(includeCookies ? [...pages, cookies] : pages).map((page) => (
-        <Pressable key={page.url} accessibilityRole="link" onPress={() => setTarget(page)} style={styles.item}>
+        <Pressable key={page.url} accessibilityRole="link" onPress={() => (onOpen ?? setTarget)(page)} style={styles.item}>
           <Text style={styles.link}>{page.title}</Text>
         </Pressable>
       ))}
