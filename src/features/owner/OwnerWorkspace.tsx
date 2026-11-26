@@ -83,7 +83,9 @@ export function OwnerWorkspace({ destination }: { destination: Destination }) {
     : <Copy>Loading branches…</Copy>;
 
   let screen;
-  if (!branch || destination === 'branches') {
+  if (destination === 'profile') {
+    screen = <ProfileScreen role="owner" />;
+  } else if (!branch || destination === 'branches') {
     screen = <BranchScreen onDone={() => open('home')} />;
   } else {
     switch (destination) {
@@ -99,7 +101,6 @@ export function OwnerWorkspace({ destination }: { destination: Destination }) {
         <Panel title={`All loads (${branch.loads.length})`}><Loads loads={branch.loads} allowChanges /></Panel>
       </>; break;
       case 'reports': screen = <Reports branch={branch} />; break;
-      case 'profile': screen = <ProfileScreen role="owner" />; break;
       default: screen = <>
         <Heading title="More" />
         <Panel title="Workspace">

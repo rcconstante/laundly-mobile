@@ -8,7 +8,7 @@ import { colors } from '../../theme';
 
 export type LegalModalTarget = { title: string; url: string };
 
-export function LegalPageContent({ target }: { target: LegalModalTarget }) {
+function LegalPageContent({ target }: { target: LegalModalTarget }) {
   const [failed, setFailed] = useState(false);
 
   if (failed) {

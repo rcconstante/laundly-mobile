@@ -1,40 +1,27 @@
-import UserCircleIcon from '@hugeicons/core-free-icons/UserCircleIcon';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Linking, StyleSheet, Switch, Text, View } from 'react-native';
-import { BrandLogo } from '../../shared/brand/BrandLogo';
+import { Linking, Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 import { brandName, websiteUrl } from '../../shared/brand/brand';
 import { LegalLinks } from '../../shared/legal/LegalLinks';
-import type { LegalModalTarget } from '../../shared/legal/LegalWebModal';
-import { Action, Copy, ErrorText, Field, Heading, ItemRow, Panel } from '../../shared/ui/WorkspaceUI';
+import { Action, Copy, ErrorText, Field, Heading, Panel } from '../../shared/ui/WorkspaceUI';
 import { colors } from '../../theme';
 import { isValidEmail } from '../auth/validation';
-import { roles, type Role } from '../workspace/roles';
-import { ProfileMenu, type ProfileSection } from './ProfileMenu';
-import { ProfileSheet } from './ProfileSheet';
+import { roleOptions, roles, workspaceHref, type Role } from '../workspace/roles';
+import { ProfileArtwork, ProfileSetting } from './ProfileSetting';
 
 type Profile = { name: string; email: string; notifications: boolean };
 
 const version = Constants.expoConfig?.version ?? '1.0.0';
-const labels: Record<ProfileSection, string> = {
-  account: 'Account',
-  preferences: 'Preferences',
-  language: 'Language',
-  about: 'About ' + brandName,
-};
 
 export function ProfileScreen({ role }: { role: Role }) {
   const key = 'laundly.profile.' + role;
-  const roleLabel = roles[role].label + ' workspace';
   const [profile, setProfile] = useState<Profile>({ name: roles[role].label + ' demo', email: '', notifications: false });
   const [draft, setDraft] = useState<Profile | null>(null);
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const [section, setSection] = useState<ProfileSection | null>(null);
-  const [legalPage, setLegalPage] = useState<LegalModalTarget | null>(null);
   const [signOut, setSignOut] = useState(false);
 
   useEffect(() => {
@@ -77,80 +64,85 @@ export function ProfileScreen({ role }: { role: Role }) {
     void save({ ...draft, name, email });
   }
 
-  function close() {
-    if (legalPage) {
-      setLegalPage(null);
-      return;
-    }
-    setSection(null);
-    setDraft(null);
-    setSignOut(false);
-  }
-
   return (
     <>
       <Heading title="Profile" />
-      {!section && <ErrorText message={error} />}
-      <ProfileMenu items={[
-        { section: 'account', label: labels.account, detail: profile.name + ' · ' + (profile.email || roleLabel) },
-        { section: 'preferences', label: labels.preferences, detail: 'Laundry updates and notifications' },
-        { section: 'language', label: labels.language, detail: 'English' },
-        { section: 'about', label: labels.about, detail: 'Version ' + version + ' · Legal and privacy' },
-      ]} onSelect={setSection} />
+      <View style={styles.profileHeader}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Open profile editor"
+          disabled={!ready || busy} onPress={() => setDraft(profile)} style={styles.avatar}>
+          <ProfileArtwork name="account" size={50} />
+        </Pressable>
+        <View style={styles.profileInfo}>
+          <Text style={styles.name}>{profile.name}</Text>
+          <Copy>{profile.email || roles[role].label + ' workspace'}</Copy>
+          <Pressable accessibilityRole="button" disabled={!ready || busy} onPress={() => setDraft(profile)} style={styles.edit}>
+            <Text style={styles.link}>Edit profile</Text>
+          </Pressable>
+        </View>
+        <Text numberOfLines={1} style={styles.badge}>{roles[role].label}</Text>
+      </View>
+      <ErrorText message={error} />
+      {draft && (
+        <Panel title="Edit profile details">
+          <Field label="Display name" value={draft.name} onChangeText={(name) => setDraft({ ...draft, name })} maxLength={80} />
+          <Field label="Profile email" value={draft.email} onChangeText={(email) => setDraft({ ...draft, email })}
+            autoCapitalize="none" keyboardType="email-address" maxLength={150} />
+          <Action label="Save profile" disabled={busy} onPress={saveDetails} />
+          <Action label="Cancel" secondary disabled={busy} onPress={() => { setDraft(null); setError(''); }} />
+        </Panel>
+      )}
 
-      {section && <ProfileSheet title={labels[section]} legalPage={legalPage} onClose={close}>
-        <ErrorText message={error} />
-        {section === 'account' && <>
-          <Panel title="Local profile">
-            <ItemRow title={profile.name} detail={profile.email || roleLabel} icon={UserCircleIcon} />
-            {draft ? <>
-              <Field label="Display name" value={draft.name} onChangeText={(name) => setDraft({ ...draft, name })} maxLength={80} />
-              <Field label="Profile email" value={draft.email} onChangeText={(email) => setDraft({ ...draft, email })}
-                autoCapitalize="none" keyboardType="email-address" maxLength={150} />
-              <Action label="Save profile" disabled={busy} onPress={saveDetails} />
-              <Action label="Cancel" secondary onPress={() => { setDraft(null); setError(''); }} />
-            </> : <Action label="Edit profile" secondary disabled={!ready} onPress={() => setDraft(profile)} />}
-          </Panel>
-          <Panel title="Session">
-            {signOut ? <>
-              <Copy>Return to the welcome screen? Your local settings and branch records will remain available.</Copy>
-              <Action label="Confirm sign out" onPress={() => { close(); router.dismissTo('/'); }} />
-              <Action label="Cancel sign out" secondary onPress={() => setSignOut(false)} />
-            </> : <Action label="Sign out" secondary onPress={() => setSignOut(true)} />}
-          </Panel>
-        </>}
-        {section === 'preferences' && <Panel title="Notifications">
-          <View style={styles.switchRow}>
-            <View style={styles.switchText}>
-              <Text style={styles.label}>Laundry updates</Text>
-              <Copy>Stores your notification preference on this device.</Copy>
-            </View>
-            <Switch accessibilityLabel="Laundry updates" value={profile.notifications} disabled={busy || !ready}
-              onValueChange={(notifications) => { void save({ ...profile, notifications }); }} />
-          </View>
-        </Panel>}
-        {section === 'language' && <Panel title="App display language">
-          <ItemRow title="English" value="Current" />
-        </Panel>}
-        {section === 'about' && <Panel title={brandName}>
-          <View style={styles.about}>
-            <BrandLogo markSize={56} />
-            <Copy>Version {version}</Copy>
-            <Copy>Tools for laundry shops, customers, and delivery riders.</Copy>
-          </View>
-          <Action label={'Visit ' + brandName + ' website'} secondary onPress={() => {
-            Linking.openURL(websiteUrl).catch(() => setError('Could not open the ' + brandName + ' website.'));
-          }} />
-          <LegalLinks includeCookies onOpen={setLegalPage} />
-        </Panel>}
-      </ProfileSheet>}
+      <Panel title="Switch profile">
+        <View accessibilityRole="radiogroup" accessibilityLabel="Switch profile" style={styles.roles}>
+          {roleOptions.map((choice) => (
+            <Pressable key={choice} accessibilityRole="radio" accessibilityLabel={roles[choice].label}
+              aria-checked={role === choice} disabled={busy} style={[styles.role, role === choice && styles.selected]}
+              onPress={() => { if (choice !== role) router.replace(workspaceHref(choice, 'profile')); }}>
+              <Text style={[styles.roleText, role === choice && styles.link]}>{roles[choice].label}</Text>
+            </Pressable>
+          ))}
+        </View>
+      </Panel>
+
+      <ProfileSetting icon="preferences" title="Laundry updates" detail="Notification preference saved on this device"
+        control={<Switch accessibilityLabel="Laundry updates" value={profile.notifications} disabled={busy || !ready || !!draft}
+          onValueChange={(notifications) => { void save({ ...profile, notifications }); }} />} />
+      <ProfileSetting icon="language" title="Language" detail="App display language"
+        control={<Text style={styles.value}>English</Text>} />
+      <ProfileSetting icon="about" title={'About ' + brandName} detail={'Version ' + version + ' · Legal and privacy'}>
+        <Pressable accessibilityRole="link" onPress={() => {
+          Linking.openURL(websiteUrl).catch(() => setError('Could not open the ' + brandName + ' website.'));
+        }} style={styles.website}>
+          <Text style={styles.link}>{'Visit ' + brandName + ' website'}</Text>
+        </Pressable>
+        <LegalLinks includeCookies />
+      </ProfileSetting>
+      {signOut ? (
+        <Panel title="Sign out">
+          <Copy>Return to the welcome screen? Your local settings and branch records will remain available.</Copy>
+          <Action label="Confirm sign out" disabled={busy} onPress={() => router.dismissTo('/')} />
+          <Action label="Cancel sign out" secondary onPress={() => setSignOut(false)} />
+        </Panel>
+      ) : <Action label="Sign out" secondary onPress={() => setSignOut(true)} />}
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  switchRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8, minHeight: 48 },
-  switchText: { flex: 1, gap: 3 },
-  label: { fontSize: 14, fontFamily: 'Inter_600SemiBold', color: colors.ink },
-  about: { alignItems: 'center', gap: 8, paddingVertical: 12 },
+  profileHeader: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 7 },
+  avatar: { width: 66, height: 66, alignItems: 'center', justifyContent: 'center',
+    backgroundColor: colors.white, borderRadius: 20, borderWidth: 1, borderColor: colors.line },
+  profileInfo: { flex: 1, minWidth: 0, gap: 3 },
+  name: { color: colors.ink, fontFamily: 'Inter_700Bold', fontSize: 19 },
+  edit: { minHeight: 44, justifyContent: 'center', alignSelf: 'flex-start' },
+  link: { color: colors.blue, fontFamily: 'Inter_700Bold', fontSize: 13 },
+  badge: { color: colors.blue, fontFamily: 'Inter_600SemiBold', fontSize: 12, maxWidth: '28%',
+    backgroundColor: colors.paleBlue, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 12, overflow: 'hidden' },
+  roles: { flexDirection: 'row', gap: 8 },
+  role: { flex: 1, minHeight: 44, paddingHorizontal: 4, alignItems: 'center', justifyContent: 'center',
+    borderColor: colors.line, borderWidth: 1, borderRadius: 22 },
+  selected: { backgroundColor: colors.paleBlue, borderColor: '#B7CBFF' },
+  roleText: { color: colors.muted, fontFamily: 'Inter_600SemiBold', fontSize: 13, textAlign: 'center' },
+  value: { color: colors.muted, fontFamily: 'Inter_600SemiBold', fontSize: 12 },
+  website: { minHeight: 44, justifyContent: 'center', alignItems: 'center' },
 });
