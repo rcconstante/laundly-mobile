@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../theme';
+import { websiteUrl } from '../brand/brand';
 import { LegalWebModal, type LegalModalTarget } from './LegalWebModal';
 
-const site = 'https://laundly.vercel.app';
 const pages: LegalModalTarget[] = [
-  { title: 'Privacy Policy', url: site + '/privacy' },
-  { title: 'Terms and Conditions', url: site + '/terms' },
+  { title: 'Privacy Policy', url: websiteUrl + '/privacy' },
+  { title: 'Terms and Conditions', url: websiteUrl + '/terms' },
 ];
 
-const cookies = { title: 'Cookies', url: site + '/cookies' };
+const cookies = { title: 'Cookies', url: websiteUrl + '/cookies' };
 
 export function LegalLinks({ includeCookies = false }: { includeCookies?: boolean }) {
   const [target, setTarget] = useState<LegalModalTarget | null>(null);

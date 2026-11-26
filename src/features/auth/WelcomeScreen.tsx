@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BrandLogo } from '../../shared/brand/BrandLogo';
+import { brandName } from '../../shared/brand/brand';
 import { colors } from '../../theme';
 import { roleOptions, roles, workspaceHref, type Role } from '../workspace/roles';
 
@@ -17,7 +18,7 @@ export function WelcomeScreen() {
         <View style={styles.hero}>
           <View pointerEvents="none" style={styles.orbit} />
           <BrandLogo markSize={112} />
-          <Text accessibilityRole="header" style={styles.title}>Laundly</Text>
+          <Text accessibilityRole="header" style={styles.title}>{brandName}</Text>
           <Text style={styles.tagline}>Smart laundry operations, beautifully synced.</Text>
         </View>
         <View style={styles.panel}>

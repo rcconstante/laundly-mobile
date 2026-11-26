@@ -1,6 +1,6 @@
-# Laundly Mobile
+# LabaPilot Mobile
 
-![Laundly logo](assets/brand/laundly-icon.webp)
+![LabaPilot logo](assets/brand/laundly-icon.webp)
 
 Expo and React Native preview for laundry shop owners, clients, and riders.
 

@@ -5,6 +5,7 @@ import { type ComponentRef, useRef } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BrandLogo } from '../../shared/brand/BrandLogo';
+import { brandName } from '../../shared/brand/brand';
 import { LegalLinks } from '../../shared/legal/LegalLinks';
 import { colors } from '../../theme';
 import { isRole, workspaceHref } from '../workspace/roles';
@@ -39,7 +40,7 @@ export function AuthScreen({ mode }: { mode: 'login' | 'signup' }) {
           <View style={styles.hero}>
             <BrandLogo markSize={64} />
             <Text accessibilityRole="header" style={styles.title}>Get started now</Text>
-            <Text style={styles.subtitle}>Create an account or log in to Laundly.</Text>
+            <Text style={styles.subtitle}>Create an account or log in to {brandName}.</Text>
           </View>
 
           <View accessibilityRole="tablist" accessibilityLabel="Account access" style={styles.switcher}>

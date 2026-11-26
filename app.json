@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Laundly",
+    "name": "LabaPilot",
     "slug": "laundly",
-    "scheme": "laundly",
+    "scheme": ["labapilot", "laundly"],
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",

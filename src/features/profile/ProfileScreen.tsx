@@ -6,6 +6,7 @@ import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Linking, StyleSheet, Switch, Text, View } from 'react-native';
 import { BrandLogo } from '../../shared/brand/BrandLogo';
+import { brandName, websiteUrl } from '../../shared/brand/brand';
 import { LegalLinks } from '../../shared/legal/LegalLinks';
 import { Action, Copy, ErrorText, Field, Heading, ItemRow, Panel } from '../../shared/ui/WorkspaceUI';
 import { colors } from '../../theme';
@@ -90,14 +91,14 @@ export function ProfileScreen({ role }: { role: Role }) {
       </View>
     </Panel>
     <Panel title="About">
-      <ItemRow title="About Laundly" detail="App information and policies" icon={InformationCircleIcon}
+      <ItemRow title={"About " + brandName} detail="App information and policies" icon={InformationCircleIcon}
         value={about ? 'Close' : 'Open'} action={() => setAbout(!about)} />
       {about && <View style={styles.about}>
         <BrandLogo markSize={55} />
-        <Copy>Laundly {Constants.expoConfig?.version ?? '1.0.0'}</Copy>
+        <Copy>{brandName} {Constants.expoConfig?.version ?? '1.0.0'}</Copy>
         <Copy>Tools for laundry shops, customers, and delivery riders.</Copy>
-        <Action label="Visit Laundly website" secondary onPress={() => {
-          Linking.openURL('https://laundly.vercel.app/').catch(() => setError('Could not open the Laundly website.'));
+        <Action label={"Visit " + brandName + " website"} secondary onPress={() => {
+          Linking.openURL(websiteUrl).catch(() => setError('Could not open the ' + brandName + ' website.'));
         }} />
         <LegalLinks includeCookies />
       </View>}

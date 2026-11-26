@@ -6,6 +6,7 @@ import { router } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BrandLogo } from '../../shared/brand/BrandLogo';
+import { brandName } from '../../shared/brand/brand';
 import { colors } from '../../theme';
 import { roles, type Destination, type Role } from './roles';
 
@@ -16,7 +17,7 @@ export function WorkspaceScreen({ role, tab }: { role: Role; tab: Destination })
       <View style={styles.header}>
         <View style={styles.brand}>
           <BrandLogo markSize={36} />
-          <Text style={styles.brandName}>Laundly</Text>
+          <Text style={styles.brandName}>{brandName}</Text>
           <Text style={styles.roleName}>{roles[role].label} workspace</Text>
         </View>
         <Pressable accessibilityRole="button" accessibilityLabel="Exit demo" style={styles.exit}
